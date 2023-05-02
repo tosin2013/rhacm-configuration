@@ -2,12 +2,12 @@
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
-  name: sample-cluster-ostoy
+  name: sample-cluster-development-placement
   namespace: acm-subscriptions
+  labels:
+    app: sample-cluster-development
+  selfLink:
 spec:
   clusterSelector:
-    matchExpressions:
-      - key: deploymentype
-        operator: In
-        values:
-          - sample-cluster
+    matchLabels:
+      local-cluster: 'true'
