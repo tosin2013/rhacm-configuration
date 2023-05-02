@@ -14,5 +14,5 @@ spec:
   channel: acm-configuration/acm-applications
   placement:
     placementRef:
-      name: sample-cluster-development
+      name: sample-cluster-development-placement
       kind: PlacementRule
