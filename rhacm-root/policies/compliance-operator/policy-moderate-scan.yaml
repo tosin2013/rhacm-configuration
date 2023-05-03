@@ -1,0 +1,142 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-moderate-scan
+  namespace: rhacm-policies
+  annotations:
+    apps.open-cluster-management.io/cluster-admin: "true"
+    apps.open-cluster-management.io/hosting-subscription: acm-configuration/acm-configuration-local
+    apps.open-cluster-management.io/reconcile-option: merge
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-6 Configuration Settings
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+  labels:
+    app: acm-configuration
+    app.kubernetes.io/part-of: acm-configuration
+    apps.open-cluster-management.io/reconcile-rate: high
+spec:
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: compliance-moderate-scan
+        spec:
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: compliance.openshift.io/v1alpha1
+                kind: ScanSettingBinding
+                metadata:
+                  name: moderate
+                  namespace: openshift-compliance
+                profiles:
+                  - name: ocp4-moderate
+                    apiGroup: compliance.openshift.io/v1alpha1
+                    kind: Profile
+                  - name: rhcos4-moderate
+                    apiGroup: compliance.openshift.io/v1alpha1
+                    kind: Profile
+                settingsRef:
+                  name: default
+                  apiGroup: compliance.openshift.io/v1alpha1
+                  kind: ScanSetting
+          remediationAction: enforce
+          severity: high
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: compliance-suite-moderate
+        spec:
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: compliance.openshift.io/v1alpha1
+                kind: ComplianceSuite
+                metadata:
+                  name: moderate
+                  namespace: openshift-compliance
+                status:
+                  phase: DONE
+          remediationAction: inform
+          severity: high
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: compliance-suite-moderate-results
+        spec:
+          object-templates:
+            - complianceType: mustnothave
+              objectDefinition:
+                apiVersion: compliance.openshift.io/v1alpha1
+                kind: ComplianceCheckResult
+                metadata:
+                  namespace: openshift-compliance
+                  labels:
+                    compliance.openshift.io/check-status: FAIL
+                    compliance.openshift.io/suite: moderate
+          remediationAction: inform
+          severity: high
+  remediationAction: enforce
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: policy-compliance-operator-placement
+  namespace: rhacm-policies
+  annotations:
+    apps.open-cluster-management.io/cluster-admin: "true"
+    apps.open-cluster-management.io/hosting-subscription: acm-configuration/acm-configuration-local
+    apps.open-cluster-management.io/reconcile-option: merge
+  generation: 1
+  labels:
+    app: acm-configuration
+    app.kubernetes.io/part-of: acm-configuration
+    apps.open-cluster-management.io/reconcile-rate: high
+spec:
+  clusterConditions: []
+  clusterSelector:
+    matchExpressions:
+      - key: vendor
+        operator: In
+        values:
+          - OpenShift
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: policy-moderate-scan-placement-binding
+  namespace: rhacm-policies
+placementRef:
+  name: policy-compliance-operator-placement
+  apiGroup: apps.open-cluster-management.io
+  kind: PlacementRule
+subjects:
+  - name: policy-moderate-scan
+    apiGroup: policy.open-cluster-management.io
+    kind: Policy
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: policy-moderate-scan-binding
+  namespace: rhacm-policies
+  annotations:
+    apps.open-cluster-management.io/cluster-admin: "true"
+    apps.open-cluster-management.io/hosting-subscription: acm-configuration/acm-configuration-local
+    apps.open-cluster-management.io/reconcile-option: merge
+  labels:
+    app: acm-configuration
+    app.kubernetes.io/part-of: acm-configuration
+    apps.open-cluster-management.io/reconcile-rate: high
+placementRef:
+  name: prod-policies-clusters
+  apiGroup: apps.open-cluster-management.io
+  kind: PlacementRule
+subjects:
+  - name: policy-moderate-scan
+    apiGroup: policy.open-cluster-management.io
+    kind: Policy
