@@ -1,0 +1,74 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-limitrange
+  namespace: rhacm-policies
+  annotations:
+    apps.open-cluster-management.io/cluster-admin: "true"
+    apps.open-cluster-management.io/hosting-subscription: acm-configuration/acm-configuration-local
+    apps.open-cluster-management.io/reconcile-option: merge
+    policy.open-cluster-management.io/categories: SC System and Communications Protection
+    policy.open-cluster-management.io/controls: SC-6 Resource Availability
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+  labels:
+    app: acm-configuration
+    app.kubernetes.io/part-of: acm-configuration
+    apps.open-cluster-management.io/reconcile-rate: high
+spec:
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-limitrange-example
+        spec:
+          namespaceSelector:
+            include:
+              - webserver-acm
+          object-templates:
+            - complianceType: mustonlyhave
+              objectDefinition:
+                apiVersion: v1
+                kind: LimitRange
+                metadata:
+                  name: webserver-limit-range
+                spec:
+                  limits:
+                    - default:
+                        memory: 512Mi
+                      defaultRequest:
+                        memory: 256Mi
+                      type: Container
+          remediationAction: enforce
+          severity: medium
+  remediationAction: enforce
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: policy-limitrange-placement
+  namespace: rhacm-policies
+spec:
+  clusterSelector:
+    matchExpressions:
+      - key: local-cluster
+        operator: In
+        values:
+          - "true"
+  clusterConditions: []
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: policy-limitrange-placement-binding
+  namespace: rhacm-policies
+placementRef:
+  name: policy-limitrange-placement
+  apiGroup: apps.open-cluster-management.io
+  kind: PlacementRule
+subjects:
+  - name: policy-limitrange
+    apiGroup: policy.open-cluster-management.io
+    kind: Policy
+
