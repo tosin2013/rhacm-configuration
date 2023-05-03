@@ -1,0 +1,17 @@
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: Subscription
+metadata:
+  name: webserver-app-prod
+  namespace: webserver-acm
+  labels:
+    app: webserver-app
+  annotations:
+    apps.open-cluster-management.io/github-path: managed/webserver-acm/sample-cluster
+    apps.open-cluster-management.io/git-branch: master
+spec:
+  channel: webserver-acm/webserver-app
+  placement:
+    placementRef:
+      kind: PlacementRule
+      name: prod-clusters
