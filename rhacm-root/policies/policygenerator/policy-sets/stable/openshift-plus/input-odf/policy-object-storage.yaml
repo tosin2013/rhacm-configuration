@@ -1,0 +1,45 @@
+apiVersion: noobaa.io/v1alpha1
+kind: BackingStore
+metadata:
+  finalizers:
+  - noobaa.io/finalizer
+  labels:
+    app: noobaa
+  name: mcg-pv-pool-bs
+  namespace: openshift-storage
+spec:
+  pvPool:
+    numVolumes: 3
+    resources:
+      requests:
+        storage: 100Gi
+  type: pv-pool
+---
+apiVersion: noobaa.io/v1alpha1
+kind: BucketClass
+metadata:
+  labels:
+    app: noobaa
+  name: noobaa-bucket
+  namespace: openshift-storage
+spec:
+  placementPolicy:
+    tiers:
+    - backingStores:
+      - mcg-pv-pool-bs
+      placement: Spread
+---
+apiVersion: noobaa.io/v1alpha1
+kind: NooBaa
+metadata:
+  name: noobaa
+  namespace: openshift-storage
+spec:
+  coreResources:
+    requests:
+      cpu: 1
+      memory: 1Gi
+  dbResources:
+    requests:
+      cpu: 1
+      memory: 1Gi
