@@ -20,7 +20,7 @@ https://github.com/redhat-gpte-devopsautomation/ilt-applications.git
 
 
 ==== Manual configuration
-https://github.com/tosin2013/rhacm-configuration/blob/master/README.adoc[Set up the main configuration Application for Red Hat Advanced Cluster Management]
+https://hackmd.io/rKGcWPITQj6EjOE0IlCP8Q[Set up the main configuration Application for Red Hat Advanced Cluster Management]
 
     oc create -k https://github.com/tosin2013/rhacm-configuration/setup/rhacm
     oc create -f https://raw.githubusercontent.com/tosin2013/rhacm-configuration/master/setup/rhacm/multiclusterhub.yaml
