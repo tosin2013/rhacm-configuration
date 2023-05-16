@@ -9,3 +9,14 @@ Only RHACM resources should be in this repository.
 
 Application resources should go into the corresponding repository:
 https://github.com/redhat-gpte-devopsautomation/ilt-applications.git
+
+=== Deploy Gitea Manually 
+`rhpds script WIP`
+```
+curl -OL https://raw.githubusercontent.com/tosin2013/openshift-demos/master/quick-scripts/deploy-gitea.sh
+chmod +x deploy-gitea.sh
+./deploy-gitea.sh
+```
+
+==== Manual configuration
+[Set up the main configuration Application for Red Hat Advanced Cluster Management](https://github.com/tosin2013/rhacm-configuration/blob/master/README.adoc)
