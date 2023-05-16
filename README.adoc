@@ -20,3 +20,7 @@ chmod +x deploy-gitea.sh
 
 ==== Manual configuration
 [Set up the main configuration Application for Red Hat Advanced Cluster Management](https://github.com/tosin2013/rhacm-configuration/blob/master/README.adoc)
+```
+oc create -k https://github.com/tosin2013/rhacm-configuration/setup/rhacm
+oc create -f https://raw.githubusercontent.com/tosin2013/rhacm-configuration/master/setup/rhacm/multiclusterhub.yaml
+```

@@ -7,4 +7,3 @@ resources:
 - operatorgroup.yaml
 - subscription.yaml
 - clusterrolebinding.yaml
-- multiclusterhub.yaml
