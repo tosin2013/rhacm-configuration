@@ -7,5 +7,4 @@ resources:
 - operatorgroup.yaml
 - subscription.yaml
 - clusterrolebinding.yaml
-- crb-patch.yaml
 - multiclusterhub.yaml
